@@ -6,6 +6,8 @@ import numpy as np
 import math
 import random
 
+from sklearn import metrics
+
 import Main
 import Preprocess
 import PossibleChar
@@ -60,12 +62,20 @@ def loadKNNDataAndTrainKNN():
         os.system("pause")
         return False
     # end try
-
     npaClassifications = npaClassifications.reshape((npaClassifications.size, 1))
     kNearest.setDefaultK(1)
-
     kNearest.train(npaFlattenedImages, cv2.ml.ROW_SAMPLE, npaClassifications)
+    from sklearn.neighbors import KNeighborsClassifier
+    knn = KNeighborsClassifier(n_neighbors=3)
+    knn.fit(npaFlattenedImages, npaClassifications.ravel())
+    y_pred = knn.predict(npaFlattenedImages)
+    print("*******************************")
+    print("Accuracy Of Model : ")
+    print(metrics.accuracy_score(npaClassifications, y_pred))
+    print("*******************************")
     return True
+
+
 
 
 def detectCharsInPlates(listOfPossiblePlates):
@@ -140,7 +150,7 @@ def detectCharsInPlates(listOfPossiblePlates):
         if (len(listOfListsOfMatchingCharsInPlate) == 0):			# if no groups of matching chars were found in the plate
 
             if Main.showSteps == True: # show steps ###############################################
-                print("chars found in plate number " + str(
+                print("Characters found in plate number: " + str(
                     intPlateCounter) + " = (none), click on any image and press a key to continue . . .")
                 intPlateCounter = intPlateCounter + 1
                 cv2.destroyWindow("8")
@@ -208,7 +218,7 @@ def detectCharsInPlates(listOfPossiblePlates):
         possiblePlate.strChars = recognizeCharsInPlate(possiblePlate.imgThresh, longestListOfMatchingCharsInPlate)
 
         if Main.showSteps == True: # show steps ###################################################
-            print("chars found in plate number " + str(
+            print("Characters found in plate number: " + str(
                 intPlateCounter) + " = " + possiblePlate.strChars + ", click on any image and press a key to continue . . .")
             intPlateCounter = intPlateCounter + 1
             cv2.waitKey(0)
@@ -217,7 +227,7 @@ def detectCharsInPlates(listOfPossiblePlates):
     # end of big for loop that takes up most of the function
 
     if Main.showSteps == True:
-        print("\nchar detection complete, click on any image and press a key to continue . . .\n")
+        print("\nCharacter detection complete, click on any image and press a key to continue . . .\n")
         cv2.waitKey(0)
     # end if
 
