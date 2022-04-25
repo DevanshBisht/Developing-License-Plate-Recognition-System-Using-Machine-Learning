@@ -8,7 +8,7 @@ import DetectPlates
 import PossiblePlate
 import mysql
 from mysql.connector import cursor
-mydb = mysql.connector.connect(host="localhost", user="root", password="Sunbeam@123",database="ALPR")
+mydb = mysql.connector.connect(host="localhost", user="root", password="Shivam@28062001", database="alpr")
 
 SCALAR_BLACK = (0.0, 0.0, 0.0)
 SCALAR_WHITE = (255.0, 255.0, 255.0)
@@ -20,9 +20,12 @@ showSteps = True
 
 def main():
 
+    print("                                       Welcome to Number Plate Recognition System                                               ")
+    print("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
+    print("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
     blnKNNTrainingSuccessful = DetectChars.loadKNNDataAndTrainKNN()
 
-    if blnKNNTrainingSuccessful == False:
+    if not blnKNNTrainingSuccessful:
         print("\nerror: KNN traning was not successful\n")
         return
     # end if
@@ -31,6 +34,7 @@ def main():
 
     if imgOriginalScene is None:
         print("\nerror: image not read from file \n\n")
+
         os.system("pause")
         return
 
@@ -41,7 +45,7 @@ def main():
     cv2.imshow("imgOriginalScene", imgOriginalScene)            # show scene image
 
     if len(listOfPossiblePlates) == 0:                          # if no plates were found
-        print("\nno license plates were detected\n")  # inform user no plates were found
+        print("\nNo. of Number Plates were detected: \n")  # inform user no plates were found
     else:                                                       # else
                 # if we get in here list of possible plates has at leat one plate
 
@@ -55,7 +59,7 @@ def main():
         cv2.imshow("imgThresh", licPlate.imgThresh)
 
         if len(licPlate.strChars) == 0:                     # if no chars were found in the plate
-            print("\nno characters were detected\n\n")  # show message
+            print("\nNo of characters were detected: \n\n")  # show message
             return                                          # and exit program
         # end if
 
@@ -67,12 +71,20 @@ def main():
         clearText = re.sub(r"[^a-zA-Z0-9]", "", text)
 
         print("------------------------------------------------------------------------------------------------------------------------------------------------------------")
-        print("\nlicense plate read from image = " + clearText + "\n")  # write license plate text to std out
+        print("\nLicense plate read from image = " + clearText + "\n")  # write license plate text to std out
+        nplate = clearText[:2]
+        print("------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        if nplate == 'LR':
+            print("Vehicle Belongs To London, England")
+        elif nplate == 'PN':
+            print("Vehicle Belongs To Punjab")
+        else:
+            print("Vehicle is not registered..")
         print("------------------------------------------------------------------------------------------------------------------------------------------------------------")
         mycursor.execute("select * from car_info where number_plate=%s", (clearText,))
         result = mycursor.fetchall()
         print("--------------------------------------------------------------------------------------------------------------------------------------------------------")
-        print("LICENCE PLATE NUMBER REGISTERED USER :")
+        print("INFORMATION OF NUMBER PLATE REGISTERED USER :")
         print("--------------------------------------------------------------------------------------------------------------------------------------------------------")
         print(
                     "|     name      |    registeration_date     |       model        |    location     |      validity     |    number_plate  |")
